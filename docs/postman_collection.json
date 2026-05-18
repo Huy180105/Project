@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "StudyWell AI Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Gateway Status",
+      "request": {
+        "method": "GET",
+        "url": "{{gateway_url}}/status"
+      }
+    },
+    {
+      "name": "Ingest Study Document",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Exam Focus Plan\",\n  \"source\": \"postman\",\n  \"text\": \"A 50 minute focus block with a 10 minute break can help students maintain concentration during exam preparation.\"\n}"
+        },
+        "url": "{{gateway_url}}/api/documents/ingest"
+      }
+    },
+    {
+      "name": "Study Coach RAG",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"How should I plan my focus blocks this week?\",\n  \"user_id\": \"demo-user\"\n}"
+        },
+        "url": "{{gateway_url}}/api/ai/chat"
+      }
+    },
+    {
+      "name": "Study-Life Insights",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"signals\": [\n    {\"recorded_on\": \"2026-05-01\", \"focus_minutes\": 180, \"sleep_hours\": 6.2, \"mood_score\": 6, \"water_cups\": 5, \"screen_time_minutes\": 480, \"energy_level\": 5}\n  ]\n}"
+        },
+        "url": "{{gateway_url}}/api/wellness/insights"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:8081"
+    }
+  ]
+}

@@ -18,8 +18,23 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'role' => User::ROLE_ADMIN,
         ]);
+
+        User::factory()->create([
+            'name' => 'Receptionist',
+            'email' => 'receptionist@example.com',
+            'role' => User::ROLE_RECEPTIONIST,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Test Patient',
+            'email' => 'patient@example.com',
+            'role' => User::ROLE_PATIENT,
+        ]);
+
+        $this->call(QueueDemoSeeder::class);
     }
 }

@@ -1,0 +1,82 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "${NGINX_PORT:-8088}:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./laravel-app/public:/var/www/laravel/public:ro
+    depends_on:
+      - laravel-app
+      - lumen-api
+
+  laravel-app:
+    build:
+      context: .
+      dockerfile: docker/php/laravel.Dockerfile
+    working_dir: /var/www/laravel
+    ports:
+      - "${LARAVEL_APP_PORT:-8080}:8080"
+    env_file:
+      - .env
+      - laravel-app/.env
+    volumes:
+      - ./laravel-app:/var/www/laravel
+    depends_on:
+      - mysql
+      - lumen-api
+
+  lumen-api:
+    build:
+      context: .
+      dockerfile: docker/php/lumen.Dockerfile
+    working_dir: /var/www/lumen
+    ports:
+      - "${LUMEN_API_PORT:-8081}:8081"
+    env_file:
+      - .env
+      - lumen-api/.env
+    volumes:
+      - ./lumen-api:/var/www/lumen
+    depends_on:
+      - mongo
+
+  mysql:
+    image: mysql:8.4
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-studywell_ai}
+      MYSQL_USER: ${DB_USERNAME:-studywell}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-admin123}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-replace-me}
+      WEBHOOK_URL: http://localhost:${N8N_PORT:-5678}/
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ./n8n-workflows:/workflows
+    depends_on:
+      - lumen-api
+
+volumes:
+  mysql-data:
+  mongo-data:
+  n8n-data:

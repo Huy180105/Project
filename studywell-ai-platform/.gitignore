@@ -1,0 +1,14 @@
+.env
+.env.local
+vendor/
+node_modules/
+storage/*.key
+storage/logs/*.log
+bootstrap/cache/*.php
+public/build/
+coverage/
+.phpunit.cache/
+.pest.cache/
+.DS_Store
+Thumbs.db
+

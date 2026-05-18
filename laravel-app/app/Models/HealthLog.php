@@ -8,6 +8,7 @@ class HealthLog extends Model
 {
     protected $fillable = [
         'user_id',
+        'log_date',
         'heart_rate',
         'sleep_hours',
         'water_intake',

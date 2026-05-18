@@ -1,0 +1,253 @@
+{
+  "name": "Smart Queue Notification Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "queue/notification",
+        "responseMode": "responseNode"
+      },
+      "id": "queue-notification-webhook",
+      "name": "Queue Notification Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.type || $json.type }}",
+                    "rightValue": "near_turn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "near_turn"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.type || $json.type }}",
+                    "rightValue": "calling",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "calling"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.type || $json.type }}",
+                    "rightValue": "missed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "missed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.type || $json.type }}",
+                    "rightValue": "completed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "completed"
+            }
+          ]
+        }
+      },
+      "id": "switch-notification-type",
+      "name": "Switch Notification Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "provider", "name": "provider", "value": "n8n-simulated", "type": "string" },
+            { "id": "accepted", "name": "accepted", "value": true, "type": "boolean" },
+            { "id": "flow", "name": "flow", "value": "near_turn", "type": "string" }
+          ]
+        }
+      },
+      "id": "simulate-near-turn",
+      "name": "Simulate Near Turn",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [760, 120]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "provider", "name": "provider", "value": "n8n-simulated", "type": "string" },
+            { "id": "accepted", "name": "accepted", "value": true, "type": "boolean" },
+            { "id": "flow", "name": "flow", "value": "calling", "type": "string" }
+          ]
+        }
+      },
+      "id": "simulate-calling",
+      "name": "Simulate Calling",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [760, 240]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "provider", "name": "provider", "value": "n8n-simulated", "type": "string" },
+            { "id": "accepted", "name": "accepted", "value": true, "type": "boolean" },
+            { "id": "flow", "name": "flow", "value": "missed", "type": "string" }
+          ]
+        }
+      },
+      "id": "simulate-missed",
+      "name": "Simulate Missed",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [760, 360]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "provider", "name": "provider", "value": "n8n-simulated", "type": "string" },
+            { "id": "accepted", "name": "accepted", "value": true, "type": "boolean" },
+            { "id": "flow", "name": "flow", "value": "completed", "type": "string" }
+          ]
+        }
+      },
+      "id": "simulate-completed",
+      "name": "Simulate Completed",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [760, 480]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, provider: 'n8n-simulated', message: 'Notification accepted' } }}"
+      },
+      "id": "respond-notification",
+      "name": "Respond Notification",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1040, 300]
+    }
+  ],
+  "connections": {
+    "Queue Notification Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch Notification Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Notification Type": {
+      "main": [
+        [
+          {
+            "node": "Simulate Near Turn",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simulate Calling",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simulate Missed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simulate Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulate Near Turn": {
+      "main": [[{ "node": "Respond Notification", "type": "main", "index": 0 }]]
+    },
+    "Simulate Calling": {
+      "main": [[{ "node": "Respond Notification", "type": "main", "index": 0 }]]
+    },
+    "Simulate Missed": {
+      "main": [[{ "node": "Respond Notification", "type": "main", "index": 0 }]]
+    },
+    "Simulate Completed": {
+      "main": [[{ "node": "Respond Notification", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,7 @@
+<resources>
+    <color name="background">#F7FBFC</color>
+    <color name="on_background">#10212B</color>
+    <color name="primary">#0F766E</color>
+    <color name="near_turn_background">#FFF4E5</color>
+    <color name="near_turn_text">#9A3412</color>
+</resources>

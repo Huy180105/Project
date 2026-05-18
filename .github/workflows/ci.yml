@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  laravel:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: laravel-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_sqlite
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: composer install --no-interaction --prefer-dist
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - run: npm ci || npm install
+      - run: npm run build
+      - run: php artisan test
+
+  lumen:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lumen-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mongodb
+      - run: composer install --no-interaction --prefer-dist
+      - run: cp .env.example .env
+      - run: vendor/bin/phpunit

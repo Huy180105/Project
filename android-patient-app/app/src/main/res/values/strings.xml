@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SmartQueuePatient</string>
+    <string name="login_title">Đăng nhập bệnh nhân</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="login_action">Đăng nhập</string>
+    <string name="register_action">Đăng ký tài khoản bệnh nhân</string>
+    <string name="register_title">Đăng ký bệnh nhân</string>
+    <string name="department_title">Danh sách khoa khám</string>
+    <string name="login_success_placeholder">Bạn đã đăng nhập thành công</string>
+    <string name="logout_placeholder">Đăng xuất</string>
+</resources>
